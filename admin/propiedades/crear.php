@@ -3,6 +3,10 @@
     require '../../includes/config/database.php';
     $db =conectarDB();
 
+    //Consultar para obtener los vendedores
+    $consulta = "SELECT * FROM vendedores";
+    $resultado = mysqli_query($db, $consulta);
+
     //Arreglo con mensajes de errores
     $errores = [];
 
@@ -16,17 +20,29 @@
 
     //Ejecutar el código despues de que el usuario envia el formulario
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+        $numero = "1HOLA";
+        $numero2 = 1;
+
+        //Sanitizar
+        // $resultado = filter_var($numero, FILTER_SANITIZE_NUMBER_INT);
+        // $resultado = filter_var($numero2, FILTER_VALIDATE_INT);
+
+        // var_dump ($resultado);
+
+        exit;
         // echo "<pre>";
         // var_dump();
         // echo "</pre>";
 
-        $titulo = $_POST['titulo'];
-        $precio = $_POST['precio'];
-        $descripcion = $_POST['descripcion'];
-        $habitaciones = $_POST['habitaciones'];
-        $wc = $_POST['wc'];
-        $estacionamiento = $_POST['estacionamiento'];
-        $vendedorId = $_POST['vendedor'];
+        $titulo = mysqli_real_escape_string($db, $_POST['titulo'] );
+        $precio = mysqli_real_escape_string($db, $_POST['precio'] );
+        $descripcion = mysqli_real_escape_string($db, $_POST['descripcion'] );
+        $habitaciones = mysqli_real_escape_string($db, $_POST['habitaciones'] );
+        $wc = mysqli_real_escape_string($db, $_POST['wc'] );
+        $estacionamiento = mysqli_real_escape_string($db, $_POST['estacionamiento'] );
+        $vendedorId = mysqli_real_escape_string($db, $_POST['vendedor'] );
+        $creado = date('Y/m/d');
 
         if (!$titulo) {
             $errores[] = "Debes añadir un titulo";
@@ -63,13 +79,16 @@
         //Revisar que el array de errores este vacio
         if (empty($errores)) {
             //Insertar en la base de datos
-            $query = "INSERT INTO propiedades (titulo, precio, descripcion, habitaciones, wc, estacionamiento, vendedorId) VALUES ('$titulo', '$precio', '$descripcion', '$habitaciones', '$wc', '$estacionamiento', '$vendedorId')";
+            $query = "INSERT INTO propiedades (titulo, precio, descripcion, habitaciones, wc, estacionamiento, creado, vendedorId) VALUES ('$titulo', '$precio', '$descripcion', '$habitaciones', '$wc', '$estacionamiento', '$creado', '$vendedorId')";
 
             //echo $query;
             $resultado = mysqli_query($db, $query);
 
             if ($resultado){
-                echo "Insertado Correctamente";
+                //Redireccionar al usuario.
+
+                header('Location: /admin');
+
             }
         }
 
@@ -127,8 +146,9 @@
                 
                 <select name="vendedor"> 
                     <option value="">--Seleccione--</option>
-                    <option value="1">Juan</option>
-                    <option value="2">Karen</option>
+                    <?php while($vendedor = mysqli_fetch_assoc($resultado)):?>
+                    <option  <?php echo $vendedorId === $vendedor['id'] ? 'selected' : '' ?>   value="<?php echo $vendedor['id']; ?>"><?php echo $vendedor['nombre'] . "" . $vendedor['apellido']; ?></option>
+                    <?php endwhile; ?>    
                 </select>
                 
 
