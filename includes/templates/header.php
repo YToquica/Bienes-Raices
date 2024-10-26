@@ -27,7 +27,6 @@
                         <a href="contacto.php">Contacto</a>
                     </nav>
                 </div>
-   
                 
             </div> <!--.barra-->
             <?php
