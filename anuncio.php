@@ -63,4 +63,4 @@
     incluirTemplate('footer'); 
 ?>
 
-//Cerrar la conexión
+
